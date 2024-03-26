@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>schedule</title>
+    <link rel="stylesheet" type="text/css" href="overview.css" />
+    <style>
+        .date-bar {
+            display: flex;
+            position: relative;
+            align-items: center;
+            justify-content: space-between;
+            width: 60%;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 20px;
+            padding: 10px;
+            top: 170px;
+        }
+
+        .arrow {
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            fill: #444444;
+            /* 设置SVG填充颜色 */
+            visibility: visible;
+        }
+
+        .date-box {
+            padding: 5px 15px;
+            border-radius: 10px;
+            background-color: #ededed;
+            cursor: pointer;
+            font-size: x-large;
+        }
+
+        .selected {
+            background-color: lightblue;
+        }
+
+        #result {
+            position: relative;
+            top: 500px;
+            text-align: center;
+        }
+
+        .info-box {
+            width: 25%;
+            display: inline-block;
+            /* 让信息框水平排列 */
+            margin: 15px;
+            /* 设置左右上下间距为15px */
+            box-sizing: border-box;
+            /* 让border和padding计入盒模型尺寸 */
+            background-color: aliceblue;
+            padding: 20px;
+            border: 1px solid #000;
+            /* text-align: center; */
+            cursor: pointer;
+            position: relative;
+            top: -300px;
+            border: none;
+        }
+
+        .info-box>div {
+            border-bottom: 1px solid #ccc;
+            padding: 6px 0;
+            width: 100%;
+        }
+
+        .info-box>div:last-child {
+            border: none;
+            /* 最后一行去掉底部边框 */
+        }
+
+        .info-box .type {
+            font-weight: normal;
+            /* 设置type为其他时文字不加粗显示 */
+        }
+
+        .info-box .type[data-type="Final"] {
+            font-weight: bold;
+        }
+
+        .info-box:hover {
+            border: 2px solid rgb(121, 215, 246);
+            padding: 18px;
+            /* 调整内边距以保持整体位置稳定 */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navBar">
+        <ul>
+            <li>
+                <img src="image/logo.png" alt="Logo">
+            </li>
+            <li>
+                <a href="overview.html">首页</a>
+            </li>
+            <li>
+                <a href="rank.html">选手排名</a>
+
+            </li>
+            <li>
+                <div class="underline">
+                    <a href="schedule.html">每日赛况</a>
+                </div>
+            </li>
+            <!-- <li>
+                <a href="detail.html">详细赛况</a>
+            </li> -->
+            <li>
+                <a href="medal.html">奖牌榜</a>
+            </li>
+        </ul>
+    </div>
+
+
+    <div class="date-bar" id="dateBar">
+       
+    </div>
+
+
+    <div id="result">
+       
+    </div>
+
+    <script>
+        let currentDateIndex = 0; // 当前选中日期在数组中的索引
+
+        // 获取后端日期列表
+        fetch('http://8.138.122.120:8001/date_list')
+            .then(response => response.json())
+            .then(data => {
+                const dateBar = document.getElementById('dateBar');
+                const dates = data.dates; // 假设从后端获取的日期列表存储在data.dates中
+
+                // 按日期从早到晚排序
+                dates.sort((a, b) => new Date(a) - new Date(b));
+
+                // 创建日期容器并按顺序添加到dateBar中
+                dates.forEach((date, index) => {
+                    const dateBox = document.createElement('div');
+                    dateBox.classList.add('date-box');
+                    dateBox.textContent = date;
+                    dateBox.setAttribute('onclick', `changeDate(${index})`);
+                    dateBar.appendChild(dateBox);
+                });
+
+                // 创建左箭头SVG元素
+                const leftArrow = document.createElement('svg');
+                leftArrow.classList.add('arrow');
+                leftArrow.setAttribute('id', 'leftArrow');
+                leftArrow.setAttribute('onclick', "changeDate(currentDateIndex - 1)");
+                leftArrow.setAttribute('xmlns', "http://www.w3.org/2000/svg");
+                leftArrow.setAttribute('viewBox', "0 0 1024 1024");
+                leftArrow.setAttribute('width', "20");
+                leftArrow.setAttribute('height', "20");
+                leftArrow.innerHTML = '<path d="M401.066667 512l302.933333 302.933333-59.733333 59.733334L341.333333 571.733333 281.6 512 341.333333 452.266667l302.933334-302.933334 59.733333 59.733334L401.066667 512z"></path>';
+
+                // 创建右箭头SVG元素
+                const rightArrow = document.createElement('svg');
+                rightArrow.classList.add('arrow');
+                rightArrow.setAttribute('id', 'rightArrow');
+                rightArrow.setAttribute('onclick', "changeDate(currentDateIndex + 1)");
+                rightArrow.setAttribute('xmlns', "http://www.w3.org/2000/svg");
+                rightArrow.setAttribute('viewBox', "0 0 1024 1024");
+                rightArrow.setAttribute('width', "20");
+                rightArrow.setAttribute('height', "20");
+                rightArrow.innerHTML = '<path d="M761.055557 532.128047c0.512619-0.992555 1.343475-1.823411 1.792447-2.848649 8.800538-18.304636 5.919204-40.703346-9.664077-55.424808L399.935923 139.743798c-19.264507-18.208305-49.631179-17.344765-67.872168 1.888778-18.208305 19.264507-17.375729 49.631179 1.888778 67.872168l316.960409 299.839269L335.199677 813.631716c-19.071845 18.399247-19.648112 48.767639-1.247144 67.872168 9.407768 9.791372 21.984142 14.688778 34.560516 14.688778 12.000108 0 24.000215-4.479398 33.311652-13.439914l350.048434-337.375729c0.672598-0.672598 0.927187-1.599785 1.599785-2.303346 0.512619-0.479935 1.056202-0.832576 1.567101-1.343475C757.759656 538.879828 759.199462 535.391265 761.055557 532.128047z" fill="#575B66"></path>';
+
+                // 将左箭头添加到日期容器的最左侧
+                dateBar.insertBefore(leftArrow, dateBar.firstChild);
+
+                // 将右箭头添加到日期容器的最右侧
+                dateBar.appendChild(rightArrow);
+
+                // 初始化时显示第一个日期的信息框
+                changeDate(0);
+            })
+            .catch(error => {
+                console.error('Error fetching date list:', error);
+            });
+
+        function changeDate(index) {
+            const dateBoxes = document.querySelectorAll('.date-box');
+
+            if (index >= 0 && index < dateBoxes.length) {
+                dateBoxes[currentDateIndex].classList.remove('selected');
+                currentDateIndex = index;
+                dateBoxes[currentDateIndex].classList.add('selected');
+
+                // 清空结果容器内容
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = '';
+
+                // 获取当前选中日期的比赛信息
+                const selectedDate = dateBoxes[currentDateIndex].textContent;
+
+                // 请求后端获取比赛信息
+                fetch('http://8.138.122.120:8001/event_items?date=' + encodeURIComponent(selectedDate))
+                    .then(response => response.json())
+                    .then(data => {
+                        // 遍历比赛信息，创建信息框并填充内容
+                        data.forEach((event, index) => {
+                            resultDiv.innerHTML += `
+                        <div class="info-box" onclick="redirectToDetail('${event.DisciplineName}')">
+                            <div class="title">${event.DisciplineName}</div>
+                            <div class="type">${event.HeatName}</div>
+                            <div class="time">${event.EventResultDate}</div>
+                        </div>`;
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching event items:', error);
+                    });
+            }
+        }
+
+
+        // 跳转到详细赛况页面
+        function redirectToDetail(title) {
+            window.location.href = 'detail.html?title=' + encodeURIComponent(title);
+        }
+    </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>overview</title>
+    <link rel="stylesheet" type="text/css" href="overview.css" />
+    <style>
+        .dropdown {
+            position: relative;
+            display: inline-block;
+            top: 200px;
+            width: 99%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 10px;
+            /* 保持下拉框标题之间的距离 */
+        }
+
+        .dropdown.active+.dropdown {
+            margin-top: 500px;
+            /* 展开一个下拉框时保持下一个下拉框标题与上一个下拉框的距离 */
+        }
+
+        .dropdown .dropdown-text {
+            background-color: #1f67b3;
+            color: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 40px;
+            text-align: center;
+            font-style: italic;
+            height: 70px;
+            /*80改为70*/
+
+            position: relative;
+            /*图标新增*/
+        }
+
+        /*图标新增*/
+        .dropdown-text .icon {
+            position: absolute;
+            top: 50%;
+            right: 30px;
+            transform: translateY(-50%);
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 100%;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            overflow-y: auto;
+            /* 添加垂直滚动条 */
+            max-height: 500px;
+            /* 设置最大高度，超出部分将出现滚动条 */
+        }
+
+        .dropdown.active .dropdown-content {
+            display: block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navBar">
+        <ul>
+            <li>
+                <img src="image/logo.png" alt="Logo">
+            </li>
+            <li>
+                <a href="overview.html">首页</a>
+            </li>
+            <li>
+                <div class="underline">
+                    <a href="rank.html">选手排名</a>
+                </div>
+            </li>
+            <li>
+                <a href="schedule.html">每日赛况</a>
+            </li>
+            <!-- <li>
+                <a href="detail.html">详细赛况</a>
+            </li> -->
+            <li>
+                <a href="medal.html">奖牌榜</a>
+            </li>
+        </ul>
+    </div>
+
+    <div id="dropdownsContainer"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const competitions = ['Women 3m Springboard', 'Men 1m Springboard', 'Men 3m Springboard', 'Women 1m Springboard', 'Men 10m Synchronised', 'Men 3m Synchronised', 'Women 10m Platform', 'Men 10m Platform', 'Women 3m Synchronised', 'Women 10m Synchronised'];
+            competitions.forEach((competition, index) => {
+                let dropdown = document.createElement('div');
+                dropdown.classList.add('dropdown');
+
+                let dropdownText = document.createElement('div');
+                dropdownText.classList.add('dropdown-text');
+                dropdownText.textContent = competition;
+
+                //新增图标
+                let icon = document.createElement('span');
+                icon.classList.add('icon');
+                icon.innerHTML = '<svg t="1711378979031" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3851" width="20" height="20"><path d="M512 625.664L131.584 245.248c-28.16-28.16-73.216-28.16-101.376 0s-28.16 73.216 0 101.376l420.864 420.864c2.56 4.096 5.632 7.68 9.216 11.264 14.336 14.336 32.768 21.504 51.712 20.992 18.432 0 37.376-6.656 51.712-20.992 3.584-3.584 6.656-7.168 9.216-11.264l420.864-420.864c13.824-13.824 20.992-32.256 20.992-50.688 0-18.432-7.168-36.864-20.992-50.688-28.16-28.16-73.216-28.16-101.376 0L512 625.664z" fill="#ffffff" p-id="3852"></path></svg>';
+                dropdownText.appendChild(icon);
+
+                let dropdownContent = document.createElement('div');
+                dropdownContent.classList.add('dropdown-content');
+                dropdownContent.id = 'dropdownContent' + (index + 1);
+                dropdownContent.style.display = 'none';
+
+                dropdown.appendChild(dropdownText);
+                dropdown.appendChild(dropdownContent);
+
+                document.getElementById('dropdownsContainer').appendChild(dropdown);
+
+                dropdownText.addEventListener('click', function (e) {
+                    toggleDropdown(index + 1);
+                });
+            });
+
+            function toggleDropdown(num) {
+                for (let j = 1; j <= competitions.length; j++) {
+                    if (j !== num) {
+                        document.getElementById('dropdownContent' + j).style.display = 'none';
+                        document.getElementsByClassName('dropdown')[j - 1].classList.remove('active');
+                    }
+                }
+                var dropdownContent = document.getElementById('dropdownContent' + num);
+                dropdownContent.style.display = dropdownContent.style.display === 'none' ? 'block' : 'none';
+                document.getElementsByClassName('dropdown')[num - 1].classList.toggle('active');
+            }
+        });
+        const username = 'root';
+        const password = '123456';
+        const basicAuth = 'Basic ' + btoa(username + ':' + password);
+
+        // 以下是打印数据到表格的逻辑
+        const url = 'http://8.138.122.120:8001/event_results';
+        fetch(url, {
+            headers: {
+                'Authorization': basicAuth
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+
+                const competitions = ['Women 3m Springboard', 'Men 1m Springboard', 'Men 3m Springboard', 'Women 1m Springboard', 'Men 10m Synchronised', 'Men 3m Synchronised', 'Women 10m Platform', 'Men 10m Platform', 'Women 3m Synchronised', 'Women 10m Synchronised'];
+                competitions.forEach((competition, index) => {
+                    let table = document.createElement('table');
+                    table.innerHTML = `
+						<tr>
+							<th>Overall Rank</th>
+							<th>Country</th>
+							<th>Athlete</th>
+							<th>Age</th>
+							<th>Points</th>
+						</tr>
+					`;
+
+                    const dropdownContent = document.getElementById('dropdownContent' + (index + 1));
+                    dropdownContent.innerHTML = ''; // 清空内容，以便填充新数据
+
+                    data.filter(item => item.DisciplineName === competition && item.HeatName === "Final").forEach(rowData => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+							<td>${rowData.OverallRank}</td>
+							<td>${rowData.Country}</td>
+							<td>${rowData.Athlete}</td>
+							<td>${rowData.Age || ''}</td>
+							<td>${rowData.Points}</td>
+						`;
+                        table.appendChild(row);
+                    });
+
+
+                    dropdownContent.appendChild(table);
+
+                    // 动态调整表格大小
+                    adjustTableSize(table);
+                });
+            })
+
+            .catch(error => console.error('Error fetching event results:', error));  // 处理错误
+
+        // 动态调整表格大小函数
+        function adjustTableSize(table) {
+            const container = table.parentElement; // 获取容器元素
+            const containerHeight = container.clientHeight; // 获取容器高度
+            const tableHeight = table.clientHeight; // 获取表格高度
+
+            console.log('Container height:', containerHeight);
+            console.log('Table height:', tableHeight);
+
+            // 如果表格高度超过容器高度，则设置表格最大高度为容器高度
+            if (tableHeight > containerHeight) {
+                container.style.maxHeight = tableHeight + 'px';
+            }
+        }
+
+    </script>
+</body>
+
+</html>

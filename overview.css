@@ -1,0 +1,117 @@
+.shadow-border {
+    width: 100px;
+    height: 150px;
+    border: 1px solid #000;
+    /* 设置整体边框 */
+    border-top: none;
+    /* 去除上边框 */
+    border-left: none;
+    /* 去除左边框 */
+    border-right: none;
+    /* 去除右边框 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    /* 下方阴影效果 */
+}
+
+.navBar {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    background-color: rgb(255, 255, 255);
+
+    text-align: center;
+    /* 水平居中 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100px;
+
+    z-index: 999;
+    /* 确保导航栏显示在页面最顶层 */
+
+    font-size: 45px;
+
+    height: 150px;
+    border: 1px solid #000;
+    /* 设置整体边框 */
+    border-top: none;
+    /* 去除上边框 */
+    border-left: none;
+    /* 去除左边框 */
+    border-right: none;
+    /* 去除右边框 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+
+}
+
+.navBar ul {
+    display: flex;
+}
+
+.navBar ul li {
+    list-style: none;
+}
+
+.navBar ul li a {
+    display: inline-block;
+    margin: 0 40px;
+    color: #333;
+    text-decoration: none;
+}
+
+.navBar ul li a:hover {
+    color: red;
+}
+
+.navBar img {
+    width: 100px;
+    /* 图片宽度 */
+    height: 100px;
+    margin-right: 20px;
+    /* 右边距 */
+}
+
+.underline {
+    position: relative;
+    display: inline-block;
+    padding-bottom: 5px;
+    /* 下划线距离文字的距离 */
+}
+
+.underline::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    /* 控制下划线位置，可以根据需要调整 */
+    width: 100%;
+    height: 2px;
+    /* 下划线高度 */
+    background-color: rgb(58, 115, 240);
+    /* 下划线颜色 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    /* 阴影效果 */
+}
+
+.about {
+    display: grid;
+    place-items: center;
+    /* 居中显示 */
+    height: 200px;
+    /* 设置一个固定的高度，以便让图片居中显示 */
+}
+
+.about img {
+    margin: 0 10px;
+    /* 可以添加一些水平间距 */
+}
+
+.about2 {
+
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+    /* 图片保持比例填充整个容器，可能会裁剪部分内容 */
+    object-position: center;
+    /* 图片在容器中居中显示 */
+}

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>schedule</title>
+    <link rel="stylesheet" type="text/css" href="overview.css" />
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border: none;
+            /* 去除单元格的边框 */
+
+            position: relative;
+
+            top: 200px;
+
+            left: 50%;
+            transform: translateX(-50%);
+            align-items: center;
+
+        }
+
+        th,
+        td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+            border: none;
+            /* 去除单元格的边框 */
+        }
+
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+            /* 设置偶数行背景颜色为浅灰色 */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navBar">
+        <ul>
+            <li>
+                <img src="image/logo.png" alt="Logo">
+            </li>
+            <li>
+                <a href="overview.html">首页</a>
+            </li>
+            <li>
+                <a href="rank.html">选手排名</a>
+            </li>
+            <li>
+
+                <a href="schedule.html">每日赛况</a>
+
+            </li>
+            <!-- <li>
+
+                <a href="detail.html">详细赛况</a>
+
+            </li> -->
+            <li>
+                <div class="underline">
+                    <a href="medal.html">奖牌榜</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <table>
+        <tr>
+            <th>Overall Rank</th>
+            <th>Country</th>
+            <th><svg t="1711264740962" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                    xmlns="http://www.w3.org/2000/svg" p-id="9474" width="20" height="20">
+                    <path
+                        d="M818.56 390.485a411.221 411.221 0 0 0-197.59-122.624l-83.583-153.258L602.667 0H1024L818.56 390.485zM512 253.141a409.984 409.984 0 0 0-303.83 134.272L0 0h421.376l131.157 255.147A424.064 424.064 0 0 0 512 253.14z m0 51.243A359.808 359.808 0 1 1 512 1024a359.808 359.808 0 0 1 0-719.616z m-133.845 552.15L512 786.175l133.845 70.357L620.288 707.5 728.576 601.94l-149.632-21.76L512 444.544l-66.901 135.637-149.675 21.76L403.712 707.5l-25.557 149.034z"
+                        fill="#f4ea2a" p-id="9475" data-spm-anchor-id="a313x.search_index.0.i18.67fd3a815M9HeU"
+                        class="selected"></path>
+                </svg> Gold</th>
+            <th><svg t="1711265202143" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                    xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+                    <path
+                        d="M818.56 390.485a411.221 411.221 0 0 0-197.59-122.624l-83.583-153.258L602.667 0H1024L818.56 390.485zM512 253.141a409.984 409.984 0 0 0-303.83 134.272L0 0h421.376l131.157 255.147A424.064 424.064 0 0 0 512 253.14z m0 51.243A359.808 359.808 0 1 1 512 1024a359.808 359.808 0 0 1 0-719.616z m-133.845 552.15L512 786.175l133.845 70.357L620.288 707.5 728.576 601.94l-149.632-21.76L512 444.544l-66.901 135.637-149.675 21.76L403.712 707.5l-25.557 149.034z"
+                        fill="#ACA8D3"></path>
+                </svg> Silver</th>
+            <th><svg t="1711265202143" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                    xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+                    <path
+                        d="M818.56 390.485a411.221 411.221 0 0 0-197.59-122.624l-83.583-153.258L602.667 0H1024L818.56 390.485zM512 253.141a409.984 409.984 0 0 0-303.83 134.272L0 0h421.376l131.157 255.147A424.064 424.064 0 0 0 512 253.14z m0 51.243A359.808 359.808 0 1 1 512 1024a359.808 359.808 0 0 1 0-719.616z m-133.845 552.15L512 786.175l133.845 70.357L620.288 707.5 728.576 601.94l-149.632-21.76L512 444.544l-66.901 135.637-149.675 21.76L403.712 707.5l-25.557 149.034z"
+                        fill="#894e13"></path>
+                </svg> Bronze</th>
+            <th>Total</th>
+        </tr>
+        <tbody id="medalTableBody">
+            <!-- 表格内容将通过 JavaScript 动态填充 -->
+        </tbody>
+    </table>
+    <script>
+        // 页面加载完成后执行
+        document.addEventListener("DOMContentLoaded", function () {
+            // 使用 Fetch API 从 Flask 应用中获取数据
+            fetch('http://8.138.122.120:8001/medal')
+                .then(response => response.json())
+                .then(data => {
+                    // 对数据按照排名顺序从1开始排序
+                    data.sort((a, b) => a.Rank - b.Rank);
+
+                    // 清空表格内容
+                    const tableBody = document.getElementById('medalTableBody');
+                    tableBody.innerHTML = '';
+
+                    // 遍历数据，将每个项目添加到表格中
+                    data.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${item.Rank}</td>
+                            <td>${item.CountryName}</td>
+                            <td>${item.Gold}</td>
+                            <td>${item.Silver}</td>
+                            <td>${item.Bronze}</td>
+                            <td>${item.Total}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Error fetching medal data:', error));
+        });
+    </script>
+</body>
+
+</html>

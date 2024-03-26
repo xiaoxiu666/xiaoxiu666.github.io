@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>schedule</title>
+    <link rel="stylesheet" type="text/css" href="overview.css" />
+    <style>
+        .show {
+            position: relative;
+            display: inline-block;
+            top: 200px;
+            width: 99%;
+            left: 50%;
+            transform: translateX(-50%);
+            align-items: center;
+        }
+
+        #title {
+            text-align: center;
+            /* 让标题居中显示 */
+            position: relative;
+            top: -20px;
+            font-style: italic;
+
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border: none;
+            /* 去除单元格的边框 */
+        }
+
+        th,
+        td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+            border: none;
+            /* 去除单元格的边框 */
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+            /* 设置偶数行背景颜色为浅灰色 */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navBar">
+        <ul>
+            <li>
+                <img src="image/logo.png" alt="Logo">
+            </li>
+            <li>
+                <a href="overview.html">首页</a>
+            </li>
+            <li>
+                <a href="rank.html">选手排名</a>
+            </li>
+            <li>
+
+                <a href="schedule.html">每日赛况</a>
+
+            </li>
+            <!-- <li>
+                <div class="underline">
+                    <a href="detail.html">详细赛况</a>
+                </div>
+            </li> -->
+            <li>
+                <a href="medal.html">奖牌榜</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="show">
+        <!-- 表格标题 -->
+        <h1 id="title"></h1>
+
+        <table id="scheduleTable">
+            <thead>
+                <tr>
+                    <th>Overall Rank</th>
+                    <th>Country</th>
+                    <th>Athlete</th>
+                    <th>Points</th>
+                    <th>Pts Behind</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 表格内容通过 JavaScript 动态填充 -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // 页面加载完成后执行
+        document.addEventListener("DOMContentLoaded", function () {
+            // 获取 URL 参数中的 title 值
+            const urlParams = new URLSearchParams(window.location.search);
+            const title = urlParams.get('title');
+            document.getElementById('title').innerText = title;
+
+            // 使用 Fetch API 从 Flask 应用中获取数据
+            fetch('http://8.138.122.120:8001/event_results')
+                .then(response => response.json())
+                .then(data => {
+                    // 清空表格内容
+                    const tableBody = document.querySelector('#scheduleTable tbody');
+                    tableBody.innerHTML = '';
+
+                    // 过滤数据，只保留 DisciplineName 与 title 匹配的项
+                    const filteredData = data.filter(item => item.DisciplineName === title);
+
+                    // 遍历匹配的数据，将每个项目添加到表格中
+                    filteredData.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${item.OverallRank}</td>
+                            <td>${item.Country}</td>
+                            <td>${item.Athlete}</td>
+                            <td>${item.Points}</td>
+                            <td>${item.PtsBehind || ''}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Error fetching event results:', error));
+        });
+    </script>
+</body>
+
+</html>
